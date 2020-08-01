@@ -1,6 +1,6 @@
 import fetch, { Response } from "node-fetch";
 import cookie from "cookie";
-import $ from "cheerio";
+import cheerio from "cheerio";
 
 export interface ClasseVivaProfile
 {
@@ -12,14 +12,22 @@ export class ClasseViva
 {
 	private static endpoints = {
 		auth: "https://web.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd",
+		profile: "https://web.spaggiari.eu/home/app/default/menu_webinfoschool_studenti.php"
 	};
 
 	constructor(private sessionId: string)
 	{}
 
-	public async getProfile(): ClasseVivaProfile
+	public async getProfile(): Promise<ClasseVivaProfile>
 	{
-		// TODO
+		const response = await this.request(ClasseViva.endpoints.profile);
+
+		const $ = cheerio.load(await response.buffer());
+
+		return <ClasseVivaProfile>{
+			name: $(".name").text(),
+			school: $(".scuola").text(),
+		};
 	}
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
