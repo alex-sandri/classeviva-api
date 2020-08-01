@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
 import cookie from "cookie";
 
 export class ClasseViva
@@ -19,5 +19,14 @@ export class ClasseViva
 		const cookies = cookie.parse(<string>response.headers.get("set-cookie"));
 
 		return new ClasseViva(cookies.PHPSESSID);
+	}
+
+	private async request(url: string): Promise<Response>
+	{
+		return await fetch(url, {
+			headers: {
+				"Cookie": cookie.serialize("PHPSESSID", this.sessionId),
+			},
+		});
 	}
 }
