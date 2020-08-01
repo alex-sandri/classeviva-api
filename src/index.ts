@@ -9,6 +9,10 @@ export interface ClasseVivaProfile
 
 export class ClasseViva
 {
+	private static endpoints = {
+		auth: "https://web.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd",
+	};
+
 	constructor(private sessionId: string)
 	{}
 
@@ -19,7 +23,7 @@ export class ClasseViva
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
 	{
-		const response = await fetch("https://web.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd", {
+		const response = await fetch(ClasseViva.endpoints.auth, {
 			method: "POST",
 			body: new URLSearchParams({ uid, pwd, cid: "", pin: "", target: "" }).toString(),
 			headers: {
