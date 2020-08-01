@@ -1,10 +1,21 @@
 import fetch, { Response } from "node-fetch";
 import cookie from "cookie";
 
+export interface ClasseVivaProfile
+{
+	name: string,
+	school: string,
+}
+
 export class ClasseViva
 {
 	constructor(private sessionId: string)
 	{}
+
+	public async getProfile(): ClasseVivaProfile
+	{
+		// TODO
+	}
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
 	{
