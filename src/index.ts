@@ -1,5 +1,6 @@
 import fetch, { Response } from "node-fetch";
 import cookie from "cookie";
+import $ from "cheerio";
 
 export interface ClasseVivaProfile
 {
