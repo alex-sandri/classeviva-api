@@ -1,0 +1,41 @@
+{
+  "name": "@alex-sandri/classeviva-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "nodemon -e ts --watch src/ --exec npm run build",
+    "build": "tsc",
+    "preversion": "npm run lint",
+    "postversion": "git push origin master --follow-tags && npm publish",
+    "lint": "eslint src/**/*.ts"
+  },
+  "author": "Alex Sandri",
+  "license": "MIT",
+  "files": [
+    "lib/**/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
+    "eslint": "^7.5.0",
+    "nodemon": "^2.0.4",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {},
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alex-sandri/classeviva-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alex-sandri/classeviva-api/issues"
+  },
+  "homepage": "https://github.com/alex-sandri/classeviva-api#readme",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  }
+}
