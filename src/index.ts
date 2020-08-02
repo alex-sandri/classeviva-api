@@ -19,10 +19,12 @@ export interface ClasseVivaGrade
 
 export class ClasseViva
 {
-	private static endpoints = {
-		auth: "https://web.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd",
-		profile: "https://web.spaggiari.eu/home/app/default/menu_webinfoschool_studenti.php",
-		grades: "https://web.spaggiari.eu/cvv/app/default/genitori_note.php?filtro=tutto",
+	private static YEAR = "";
+
+	private static ENDPOINTS = {
+		auth: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd`,
+		profile: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/home/app/default/menu_webinfoschool_studenti.php`,
+		grades: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/cvv/app/default/genitori_note.php?filtro=tutto`,
 	};
 
 	constructor(private sessionId: string)
@@ -30,7 +32,7 @@ export class ClasseViva
 
 	public async getProfile(): Promise<ClasseVivaProfile>
 	{
-		const response = await this.request(ClasseViva.endpoints.profile);
+		const response = await this.request(ClasseViva.ENDPOINTS.profile());
 
 		const $ = cheerio.load(await response.buffer());
 
@@ -42,9 +44,7 @@ export class ClasseViva
 
 	public async getGrades(): Promise<ClasseVivaGrade[]>
 	{
-		const response = await this.request(ClasseViva.endpoints.grades);
-
-		console.log(await response.text());
+		const response = await this.request(ClasseViva.ENDPOINTS.grades());
 
 		const $ = cheerio.load(await response.buffer());
 
@@ -71,7 +71,7 @@ export class ClasseViva
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
 	{
-		const response = await fetch(ClasseViva.endpoints.auth, {
+		const response = await fetch(ClasseViva.ENDPOINTS.auth(), {
 			method: "POST",
 			body: new URLSearchParams({ uid, pwd, cid: "", pin: "", target: "" }).toString(),
 			headers: {
