@@ -75,8 +75,8 @@ export class ClasseViva
 		const $ = cheerio.load(await response.buffer());
 
 		return <ClasseVivaProfile>{
-			name: $(".name").text(),
-			school: $(".scuola").text(),
+			name: $(".name").text().trim(),
+			school: $(".scuola").text().trim(),
 		};
 	}
 
@@ -90,16 +90,16 @@ export class ClasseViva
 
 		$(".registro").each((i, element) =>
 		{
-			const subject = $(element).text();
+			const subject = $(element).text().trim();
 
 			$(element).parent().nextUntil("tr[align=center]").each(((i, grade) =>
 			{
 				grades.push({
 					subject,
-					grade: $(grade).find(".s_reg_testo").text(),
-					type: $(grade).find(".voto_data").last().text(),
-					description: $(grade).find("[colspan=32]").find("span").text(),
-					date: $(grade).find(".voto_data").first().text(),
+					grade: $(grade).find(".s_reg_testo").text().trim(),
+					type: $(grade).find(".voto_data").last().text().trim(),
+					description: $(grade).find("[colspan=32]").find("span").text().trim(),
+					date: $(grade).find(".voto_data").first().text().trim(),
 				});
 			}));
 		});
@@ -146,11 +146,11 @@ export class ClasseViva
 
 			attachments.push({
 				id,
-				teacher: $(attachment).children(":nth-child(2)").text(),
-				name: $(attachment).find(".row_contenuto_desc").text(),
-				folder: $(attachment).find(".row_contenuto_desc").siblings("span").children("span").text(),
+				teacher: $(attachment).children(":nth-child(2)").text().trim(),
+				name: $(attachment).find(".row_contenuto_desc").text().trim(),
+				folder: $(attachment).find(".row_contenuto_desc").siblings("span").children("span").text().trim(),
 				type,
-				date: $(attachment).find("[colspan=7]").children().text(),
+				date: $(attachment).find("[colspan=7]").children().text().trim(),
 				url,
 			});
 		});
