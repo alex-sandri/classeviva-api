@@ -139,7 +139,7 @@ export class ClasseViva
 
 			switch (type)
 			{
-				case "file": url = new URL(ClasseViva.ENDPOINTS.fileAttachments(id, <string>$(attachment).attr("cksum"))); break;
+				case "file": url = new URL(ClasseViva.ENDPOINTS.fileAttachments(id, <string>$(attachment).find(".button_action").attr("cksum"))); break;
 				case "link": url = new URL(<string>$(attachment).find(".button_action").attr("ref")); break;
 				case "testo": url = new URL(ClasseViva.ENDPOINTS.textAttachments(id)); break;
 			}
