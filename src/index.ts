@@ -50,6 +50,14 @@ export interface ClasseVivaAttachment
 	url: URL,
 }
 
+export interface ClasseVivaDemerit
+{
+	teacher: string,
+	date: string,
+	content: string,
+	type: string,
+}
+
 export class ClasseViva
 {
 	private static YEAR = "19";
@@ -63,6 +71,7 @@ export class ClasseViva
 		fileAttachments: (id: string, checksum: string) =>
 			`https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/didattica_genitori.php?a=downloadContenuto&contenuto_id=${id}&cksum=${checksum}`,
 		textAttachments: (id: string) => `https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/didattica.php?a=getContentText&contenuto_id=${id}`,
+		demerits: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/gioprof_note_studente.php`,
 	};
 
 	constructor(private sessionId: string)
@@ -156,6 +165,27 @@ export class ClasseViva
 		});
 
 		return attachments;
+	}
+
+	public async getDemerits(): Promise<ClasseVivaDemerit[]>
+	{
+		const response = await this.request(ClasseViva.ENDPOINTS.demerits());
+
+		const $ = cheerio.load(await response.buffer());
+
+		const demerits: ClasseVivaDemerit[] = [];
+
+		$("#sort_table tbody tr").each((i, demerit) =>
+		{
+			demerits.push({
+				teacher: $(demerit).children(":first-child").text().trim(),
+				date: $(demerit).children(":nth-child(2)").text().trim(),
+				content: $(demerit).children(":nth-child(3)").text().trim(),
+				type: $(demerit).children(":last-child").text().trim(),
+			});
+		});
+
+		return demerits;
 	}
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
