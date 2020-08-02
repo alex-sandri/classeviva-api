@@ -94,7 +94,10 @@ export class ClasseViva
 	{
 		const response = await this.request(ClasseViva.ENDPOINTS.agenda(), {
 			method: "POST",
-			body: new URLSearchParams({ start: Math.trunc(start.getTime() / 1000).toString(), end: Math.trunc(end.getTime() / 1000).toString() }).toString(),
+			body: new URLSearchParams({
+				start: Math.trunc(start.getTime() / 1000).toString(),
+				end: Math.trunc(end.getTime() / 1000).toString()
+			}).toString(),
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 			},
