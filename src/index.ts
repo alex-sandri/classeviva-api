@@ -19,7 +19,7 @@ export interface ClasseVivaGrade
 
 export class ClasseViva
 {
-	private static YEAR = "";
+	private static YEAR = "19";
 
 	private static ENDPOINTS = {
 		auth: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/auth-p7/app/default/AuthApi4.php?a=aLoginPwd`,
@@ -54,7 +54,7 @@ export class ClasseViva
 		{
 			const subject = $(element).text();
 
-			$(element).parent().nextUntil("[align=center]").each(((i, grade) =>
+			$(element).parent().nextUntil("tr[align=center]").each(((i, grade) =>
 			{
 				grades.push({
 					subject,
