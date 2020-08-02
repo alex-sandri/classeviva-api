@@ -37,6 +37,19 @@ export interface ClasseVivaAgendaItem
 	materia_id: string | null,
 }
 
+export type ClasseVivaAttachmentType = "file" | "link" | "testo";
+
+export interface ClasseVivaAttachment
+{
+	id: string,
+	teacher: string,
+	name: string,
+	folder: string,
+	type: ClasseVivaAttachmentType,
+	date: string,
+	url: URL,
+}
+
 export class ClasseViva
 {
 	private static YEAR = "19";
@@ -46,6 +59,10 @@ export class ClasseViva
 		profile: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/home/app/default/menu_webinfoschool_studenti.php`,
 		grades: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/cvv/app/default/genitori_note.php?filtro=tutto`,
 		agenda: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/agenda_studenti.php?ope=get_events`,
+		attachments: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/didattica_genitori_new.php`,
+		fileAttachments: (id: string, checksum: string) =>
+			`https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/didattica_genitori.php?a=downloadContenuto&contenuto_id=${id}&cksum=${checksum}`,
+		textAttachments: (id: string) => `https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/didattica.php?a=getContentText&contenuto_id=${id}`,
 	};
 
 	constructor(private sessionId: string)
@@ -104,6 +121,41 @@ export class ClasseViva
 		});
 
 		return response.json();
+	}
+
+	public async getAttachments(): Promise<ClasseVivaAttachment[]>
+	{
+		const response = await this.request(ClasseViva.ENDPOINTS.attachments());
+
+		const $ = cheerio.load(await response.buffer());
+
+		const attachments: ClasseVivaAttachment[] = [];
+
+		$(".contenuto").each((i, attachment) =>
+		{
+			const id = <string>$(attachment).attr("contenuto_id");
+			const type = <ClasseVivaAttachmentType>(<string>(<string>$(attachment).find("img").first().attr("src")).split("/").pop()).split(".")[0];
+			let url: URL;
+
+			switch (type)
+			{
+				case "file": url = new URL(ClasseViva.ENDPOINTS.fileAttachments(id, <string>$(attachment).attr("cksum"))); break;
+				case "link": url = new URL(<string>$(attachment).find(".button_action").attr("ref")); break;
+				case "testo": url = new URL(ClasseViva.ENDPOINTS.textAttachments(id)); break;
+			}
+
+			attachments.push({
+				id,
+				teacher: $(attachment).children(":nth-child(2)").text(),
+				name: $(attachment).find(".row_contenuto_desc").text(),
+				folder: $(attachment).find(".row_contenuto_desc").siblings("span").children("span").text(),
+				type,
+				date: $(attachment).find("[colspan=7]").children().text(),
+				url,
+			});
+		});
+
+		return attachments;
 	}
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
