@@ -40,7 +40,8 @@ export class ClasseViva
 			},
 		});
 
-		const cookies = cookie.parse(<string>response.headers.get("set-cookie"));
+		// Use the second PHPSESSID cookie (because for some reason ClasseViva returns two PHPSESSID cookies)
+		const cookies = cookie.parse(<string>response.headers.raw()["set-cookie"].pop());
 
 		return new ClasseViva(cookies.PHPSESSID);
 	}
