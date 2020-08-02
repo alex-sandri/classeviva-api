@@ -75,7 +75,7 @@ export class ClasseViva
 		demerits: () => `https://web${ClasseViva.YEAR}.spaggiari.eu/fml/app/default/gioprof_note_studente.php`,
 	};
 
-	constructor(private sessionId: string)
+	constructor(public sessionId: string)
 	{}
 
 	public async getProfile(): Promise<ClasseVivaProfile>
