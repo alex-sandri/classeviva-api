@@ -1,4 +1,4 @@
-import fetch, { Response, RequestInit } from "node-fetch";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import cookie from "cookie";
 import cheerio from "cheerio";
 
@@ -80,9 +80,11 @@ export class ClasseViva
 
 	public async getProfile(): Promise<ClasseVivaProfile>
 	{
-		const response = await this.request(ClasseViva.ENDPOINTS.profile());
+		const response = await this.request({
+			url: ClasseViva.ENDPOINTS.profile(),
+		});
 
-		const $ = cheerio.load(await response.buffer());
+		const $ = cheerio.load(response.data);
 
 		return <ClasseVivaProfile>{
 			name: $(".name").text().trim(),
@@ -92,9 +94,11 @@ export class ClasseViva
 
 	public async getGrades(): Promise<ClasseVivaGrade[]>
 	{
-		const response = await this.request(ClasseViva.ENDPOINTS.grades());
+		const response = await this.request({
+			url: ClasseViva.ENDPOINTS.grades(),
+		});
 
-		const $ = cheerio.load(await response.buffer());
+		const $ = cheerio.load(response.data);
 
 		const grades: ClasseVivaGrade[] = [];
 
@@ -119,9 +123,10 @@ export class ClasseViva
 
 	public async getAgenda(start: Date, end: Date): Promise<ClasseVivaAgendaItem[]>
 	{
-		const response = await this.request(ClasseViva.ENDPOINTS.agenda(), {
+		const response = await this.request({
+			url: ClasseViva.ENDPOINTS.agenda(),
 			method: "POST",
-			body: new URLSearchParams({
+			data: new URLSearchParams({
 				start: Math.trunc(start.getTime() / 1000).toString(),
 				end: Math.trunc(end.getTime() / 1000).toString()
 			}).toString(),
@@ -130,14 +135,16 @@ export class ClasseViva
 			},
 		});
 
-		return response.json();
+		return response.data;
 	}
 
 	public async getAttachments(): Promise<ClasseVivaAttachment[]>
 	{
-		const response = await this.request(ClasseViva.ENDPOINTS.attachments());
+		const response = await this.request({
+			url: ClasseViva.ENDPOINTS.attachments(),
+		});
 
-		const $ = cheerio.load(await response.buffer());
+		const $ = cheerio.load(response.data);
 
 		const attachments: ClasseVivaAttachment[] = [];
 
@@ -170,9 +177,11 @@ export class ClasseViva
 
 	public async getDemerits(): Promise<ClasseVivaDemerit[]>
 	{
-		const response = await this.request(ClasseViva.ENDPOINTS.demerits());
+		const response = await this.request({
+			url: ClasseViva.ENDPOINTS.demerits(),
+		});
 
-		const $ = cheerio.load(await response.buffer());
+		const $ = cheerio.load(response.data);
 
 		const demerits: ClasseVivaDemerit[] = [];
 
@@ -191,34 +200,33 @@ export class ClasseViva
 
 	public static async createSession(uid: string, pwd: string): Promise<ClasseViva>
 	{
-		const response = await fetch(ClasseViva.ENDPOINTS.auth(), {
-			method: "POST",
-			body: new URLSearchParams({ uid, pwd, cid: "", pin: "", target: "" }).toString(),
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-			},
-		});
+		const response = await axios.post(
+			ClasseViva.ENDPOINTS.auth(),
+			new URLSearchParams({ uid, pwd, cid: "", pin: "", target: "" }).toString(),
+			{
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+				},
+				responseType: "json",
+			}
+		);
 
-		const responseJson = await response.json();
+		const responseJson = response.data;
 
-		if (responseJson.error) return Promise.reject(responseJson.error);
+		if ((<string[]>responseJson.error).length > 0) return Promise.reject(responseJson.error);
 
 		// Use the second PHPSESSID cookie (because for some reason ClasseViva returns two PHPSESSID cookies)
-		const cookies = cookie.parse(<string>response.headers.raw()["set-cookie"].pop());
+		const cookies = cookie.parse(<string>(<string[]>response.headers["set-cookie"]).pop());
 
 		return new ClasseViva(cookies.PHPSESSID);
 	}
 
-	private request(url: string, init?: RequestInit): Promise<Response>
+	private request(config: AxiosRequestConfig): Promise<AxiosResponse<any>>
 	{
-		init = init ?? {};
+		config.headers = config.headers ?? {};
 
-		return fetch(url, {
-			...init,
-			headers: {
-				...init.headers,
-				"Cookie": cookie.serialize("PHPSESSID", this.sessionId),
-			},
-		});
+		config.headers["Cookie"] = cookie.serialize("PHPSESSID", this.sessionId);
+
+		return axios.request(config);
 	}
 }
