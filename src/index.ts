@@ -90,11 +90,11 @@ export class ClasseViva
 		return grades;
 	}
 
-	public async getAgenda(start: number, end: number): Promise<ClasseVivaAgendaItem[]>
+	public async getAgenda(start: Date, end: Date): Promise<ClasseVivaAgendaItem[]>
 	{
 		const response = await this.request(ClasseViva.ENDPOINTS.agenda(), {
 			method: "POST",
-			body: new URLSearchParams({ start: start.toString(), end: end.toString() }).toString(),
+			body: new URLSearchParams({ start: Math.trunc(start.getTime() / 1000).toString(), end: Math.trunc(end.getTime() / 1000).toString() }).toString(),
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
 			},
