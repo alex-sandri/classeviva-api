@@ -15,7 +15,7 @@ export interface ClasseVivaGrade
 	type: string,
 	description: string,
 	date: string,
-};
+}
 
 export interface ClasseVivaAgendaItem
 {
