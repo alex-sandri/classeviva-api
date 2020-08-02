@@ -23,7 +23,50 @@ npm install @alex-sandri/classeviva-api
 
 ## Usage
 
-TODO
+### Import
+
+```typescript
+import { ClasseViva } from "@alex-sandri/classeviva-api";
+```
+
+### Create a new session
+
+```typescript
+ClasseViva.createSession("uid", "pwd").then(session =>
+{
+    // Access the session data
+});
+```
+
+### Get profile
+
+```typescript
+const profile = await session.getProfile();
+```
+
+### Get grades
+
+```typescript
+const grades = await session.getGrades();
+```
+
+### Get agenda
+
+```typescript
+const agenda = await session.getAgenda();
+```
+
+### Get attachments
+
+```typescript
+const attachments = await session.getAttachments();
+```
+
+### Get demerits
+
+```typescript
+const demerits = await session.getDemerits();
+```
 
 ## License
 
