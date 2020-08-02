@@ -199,6 +199,10 @@ export class ClasseViva
 			},
 		});
 
+		const responseJson = await response.json();
+
+		if (responseJson.error) return Promise.reject(responseJson.error);
+
 		// Use the second PHPSESSID cookie (because for some reason ClasseViva returns two PHPSESSID cookies)
 		const cookies = cookie.parse(<string>response.headers.raw()["set-cookie"].pop());
 
