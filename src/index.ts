@@ -119,11 +119,11 @@ export class ClasseViva
 		return new ClasseViva(cookies.PHPSESSID);
 	}
 
-	private async request(url: string, init?: RequestInit): Promise<Response>
+	private request(url: string, init?: RequestInit): Promise<Response>
 	{
 		init = init ?? {};
 
-		return await fetch(url, {
+		return fetch(url, {
 			...init,
 			headers: {
 				...init.headers,
