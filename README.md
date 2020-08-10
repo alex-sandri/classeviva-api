@@ -1,8 +1,7 @@
 # ClasseViva API
 
 [![GitHub license](https://img.shields.io/github/license/alex-sandri/classeviva-api)](https://github.com/alex-sandri/classeviva-api/blob/master/LICENSE)\
-![GitHub package.json version](https://img.shields.io/github/package-json/v/alex-sandri/classeviva-api)\
-![David](https://img.shields.io/david/alex-sandri/classeviva-api)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/alex-sandri/classeviva-api)
 
 ClasseViva API is an **unofficial** module that allows you to access data from Spaggiari's ClasseViva electronic register.
 
