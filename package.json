@@ -19,7 +19,7 @@
     "@types/cheerio": "^0.22.21",
     "@types/cookie": "^0.4.0",
     "@typescript-eslint/eslint-plugin": "^3.7.1",
-    "@typescript-eslint/parser": "^3.7.1",
+    "@typescript-eslint/parser": "^3.8.0",
     "eslint": "^7.6.0",
     "nodemon": "^2.0.4",
     "typescript": "^3.9.7"
